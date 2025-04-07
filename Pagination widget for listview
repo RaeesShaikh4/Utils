@@ -1,0 +1,60 @@
+
+class AtdScrollPagination extends StatefulWidget {
+  const AtdScrollPagination(
+      {required this.child,
+      required this.onPaginationCallback,
+      required this.isDataLoading,
+      required this.hasMoreData,
+      Key? key})
+      : super(key: key);
+
+  final Widget child;
+
+  final VoidCallback onPaginationCallback;
+
+  final bool isDataLoading;
+
+  final bool hasMoreData;
+
+  @override
+  State<StatefulWidget> createState() => _AtdScrollPaginationState();
+}
+
+class _AtdScrollPaginationState extends State<AtdScrollPagination> {
+  bool isLoadingInProgress = false;
+  @override
+  Widget build(BuildContext context) {
+    isLoadingInProgress = widget.isDataLoading;
+    return Stack(
+      children: [
+        NotificationListener(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels ==
+                    scrollInfo.metrics.maxScrollExtent &&
+                !widget.isDataLoading &&
+                !isLoadingInProgress &&
+                widget.hasMoreData) {
+              isLoadingInProgress = true;
+              widget.onPaginationCallback.call();
+            }
+            return false;
+          },
+          child: widget.child,
+        ),
+        if (widget.hasMoreData)
+          Visibility(
+            visible: widget.isDataLoading, //widget.isDataLoading,
+            child: const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 20,
+              child: SpinKitWave(
+                color: ColorUtils.azul,
+                size: 20,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
