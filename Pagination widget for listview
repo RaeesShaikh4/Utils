@@ -1,4 +1,4 @@
-
+------> actual widget <--------
 class AtdScrollPagination extends StatefulWidget {
   const AtdScrollPagination(
       {required this.child,
@@ -58,3 +58,22 @@ class _AtdScrollPaginationState extends State<AtdScrollPagination> {
     );
   }
 }
+
+------> widget use <--------
+AtdScrollPagination(
+  isDataLoading: state.isLoadingMore,
+  hasMoreData:
+      state.recentOrders.links?.hasMore() == true,
+  onPaginationCallback: () {
+    pushEvent(const OrderListEvent());
+  },
+  child: ListViewBuilder<Order>(
+    itemBuilder: (context, index) => OrderCard(
+      state.recentOrders.results![index],
+      onOrderCancel: (id) {  },
+      onRetryPayment:  ()  { },
+    ),
+    pageable: state.recentOrders,
+    data: state.recentOrders.results?.toList() ?? [],
+  ),
+)
